@@ -16,11 +16,13 @@ import com.bytedance.sdk.openadsdk.TTFullScreenVideoAd;
 public class MainActivity extends AppCompatActivity {
     private TTAdNative mttAdNative;
     private TTFullScreenVideoAd mttFullVideoAd;
+    private TextView initResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initResult = findViewById(R.id.textView);
         initTTAdSdk();
         loadAD("980051567");
     }
@@ -43,20 +45,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void success() {
                 //load pangle ads after this method is triggered.
-                TextView initResult = findViewById(R.id.textView);
-                if (TTAdSdk.isInitSuccess()) {
-                    String result = "SDK Init Success";
-                    initResult.setText(result);
-                } else {
-                    String result = "SDK Init Failed";
-                    initResult.setText(result);
-                }
-
+                initResult.setText("SDK Init Success");
             }
 
             @Override
             public void fail(int code, String msg) {
-
+                initResult.setText("SDK Init Failed");
             }
         });
     }
@@ -65,11 +59,13 @@ public class MainActivity extends AppCompatActivity {
         mttAdNative = TTAdSdk.getAdManager().createAdNative(getApplicationContext());
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(codeId)
+                .setImageAcceptedSize(1080,1920)
                 .build();
         TTAdNative.FullScreenVideoAdListener loadCallback = new TTAdNative.FullScreenVideoAdListener() {
 
             @Override
             public void onError(int code, String message) {
+                Toast.makeText(MainActivity.this, "Load Ad Error", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -82,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFullScreenVideoCached() {
+                Toast.makeText(MainActivity.this, "on Full Screen Video Cached", Toast.LENGTH_SHORT).show();
 
             }
 
