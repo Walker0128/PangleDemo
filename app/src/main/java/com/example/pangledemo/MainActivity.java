@@ -1,14 +1,11 @@
 package com.example.pangledemo;
 
-import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdConfig;
@@ -25,31 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initTTAdSdk();
-
-        mttAdNative = TTAdSdk.getAdManager().createAdNative(getApplicationContext());
-        AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("980051567")
-                .build();
-        TTAdNative.FullScreenVideoAdListener loadCallback = new TTAdNative.FullScreenVideoAdListener() {
-
-            @Override
-            public void onError(int code, String message) {
-
-            }
-
-            @Override
-            public void onFullScreenVideoAdLoad(TTFullScreenVideoAd ttFullScreenVideoAd) {
-                mttFullVideoAd = ttFullScreenVideoAd;
-
-            }
-
-            @Override
-            public void onFullScreenVideoCached() {
-
-            }
-
-        };
-        mttAdNative.loadFullScreenVideoAd(adSlot,loadCallback);
+        loadAD("980051567");
     }
 
     public void openFullScreenAd(View view) {
@@ -60,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
         return new TTAdConfig.Builder()
                 .appId("5001121")
                 .supportMultiProcess(false)
-                .debug(true)
-                .debugLog(1)
+                .debug(false)
                 .coppa(0) //CoppaValue: 0 adult, 1 child
                 .build();
     }
@@ -89,6 +61,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void loadAD(String codeId) {
+        mttAdNative = TTAdSdk.getAdManager().createAdNative(getApplicationContext());
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId(codeId)
+                .build();
+        TTAdNative.FullScreenVideoAdListener loadCallback = new TTAdNative.FullScreenVideoAdListener() {
+
+            @Override
+            public void onError(int code, String message) {
+
+            }
+
+            @Override
+            public void onFullScreenVideoAdLoad(TTFullScreenVideoAd ttFullScreenVideoAd) {
+                mttFullVideoAd = ttFullScreenVideoAd;
+                Toast.makeText(MainActivity.this, "Full Screen Video Load", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFullScreenVideoCached() {
+
+            }
+
+        };
+        mttAdNative.loadFullScreenVideoAd(adSlot, loadCallback);
+    }
 
     public void showAdIfAvailable() {
         if (mttFullVideoAd != null) {
@@ -96,34 +95,30 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onAdShow() {
-                    Log.d(TAG, "Callback --> FullVideoAd show");
                 }
 
                 @Override
                 public void onAdVideoBarClick() {
-                    Log.d(TAG, "Callback --> FullVideoAd bar click");
                 }
 
                 @Override
                 public void onAdClose() {
-                    Log.d(TAG, "Callback --> FullVideoAd close");
                 }
 
                 @Override
                 public void onVideoComplete() {
-                    Log.d(TAG, "Callback --> FullVideoAd complete");
                 }
 
                 @Override
                 public void onSkippedVideo() {
-                    Log.d(TAG, "Callback --> FullVideoAd skipped");
-
                 }
 
             });
 
             //Call the showAppOpenAd method to render the ad and it needs to pass in activity.
             mttFullVideoAd.showFullScreenVideoAd(MainActivity.this);
+        } else {
+            Toast.makeText(this, "Full Video need load", Toast.LENGTH_SHORT).show();
         }
     }
 
