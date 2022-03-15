@@ -14,8 +14,8 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTFullScreenVideoAd;
 
 public class MainActivity extends AppCompatActivity {
-    private TTAdNative mttAdNative;
-    private TTFullScreenVideoAd mttFullVideoAd;
+    private TTAdNative ttAdNative;
+    private TTFullScreenVideoAd ttFullVideoAd;
     private TextView initResult;
 
     @Override
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openFullScreenAd(View view) {
         loadAD("980051567");
-        // showAdIfAvailable();
+        showAdIfAvailable();
     }
 
     private TTAdConfig buildConfig() {
@@ -56,24 +56,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadAD(String codeId) {
-        mttAdNative = TTAdSdk.getAdManager().createAdNative(getApplicationContext());
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(codeId)
-                .setImageAcceptedSize(1080,1920)
+//                .setImageAcceptedSize(1080,1920)
                 .build();
-        TTAdNative.FullScreenVideoAdListener loadCallback = new TTAdNative.FullScreenVideoAdListener() {
+        ttAdNative = TTAdSdk.getAdManager().createAdNative(getApplicationContext());
+        ttAdNative.loadFullScreenVideoAd(adSlot, new TTAdNative.FullScreenVideoAdListener() {
 
             @Override
             public void onError(int code, String message) {
-                Toast.makeText(MainActivity.this, "Load Ad Error", Toast.LENGTH_SHORT).show();
-
+                String errMessage = "Load Error Code: " + code + ", Message: " + message;
+                Toast.makeText(MainActivity.this, errMessage, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFullScreenVideoAdLoad(TTFullScreenVideoAd ttFullScreenVideoAd) {
-                mttFullVideoAd = ttFullScreenVideoAd;
                 Toast.makeText(MainActivity.this, "Full Screen Video Load", Toast.LENGTH_SHORT).show();
-                showAdIfAvailable();
+                ttFullVideoAd = ttFullScreenVideoAd;
+                ttFullVideoAd.setFullScreenVideoAdInteractionListener(new TTFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
+
+                    @Override
+                    public void onAdShow() {
+                    }
+
+                    @Override
+                    public void onAdVideoBarClick() {
+                    }
+
+                    @Override
+                    public void onAdClose() {
+                    }
+
+                    @Override
+                    public void onVideoComplete() {
+                    }
+
+                    @Override
+                    public void onSkippedVideo() {
+                    }
+
+                });
 
             }
 
@@ -83,38 +105,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-        };
-        mttAdNative.loadFullScreenVideoAd(adSlot, loadCallback);
+        });
     }
 
     public void showAdIfAvailable() {
-        if (mttFullVideoAd != null) {
-            mttFullVideoAd.setFullScreenVideoAdInteractionListener(new TTFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
-
-                @Override
-                public void onAdShow() {
-                }
-
-                @Override
-                public void onAdVideoBarClick() {
-                }
-
-                @Override
-                public void onAdClose() {
-                }
-
-                @Override
-                public void onVideoComplete() {
-                }
-
-                @Override
-                public void onSkippedVideo() {
-                }
-
-            });
-
+        if (ttFullVideoAd != null) {
             //Call the showAppOpenAd method to render the ad and it needs to pass in activity.
-            mttFullVideoAd.showFullScreenVideoAd(MainActivity.this);
+            ttFullVideoAd.showFullScreenVideoAd(MainActivity.this);
         } else {
             Toast.makeText(this, "Load AD failed", Toast.LENGTH_SHORT).show();
         }
