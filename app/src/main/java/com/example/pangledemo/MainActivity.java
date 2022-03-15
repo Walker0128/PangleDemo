@@ -26,11 +26,19 @@ public class MainActivity extends AppCompatActivity {
         initTTAdSdk();
     }
 
+    /**
+     * @Button PangleFullVideoButton
+     * @param view
+     */
     public void openFullScreenAd(View view) {
         loadAD("980051567");
         showAdIfAvailable();
     }
 
+    /**
+     * Pangle SDK build config
+     * @return
+     */
     private TTAdConfig buildConfig() {
         return new TTAdConfig.Builder()
                 .appId("5001121")
@@ -40,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
+    /**
+     * init Pangle SDK
+     */
     public void initTTAdSdk() {
         TTAdSdk.init(getApplicationContext(), buildConfig(), new TTAdSdk.InitCallback() {
             @Override
@@ -55,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Load Pangle FullScreenAD
+     * @param codeId
+     */
     public void loadAD(String codeId) {
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(codeId)
@@ -108,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Show Pangle full screen video ad
+     */
     public void showAdIfAvailable() {
         if (ttFullVideoAd != null) {
             //Call the showAppOpenAd method to render the ad and it needs to pass in activity.
