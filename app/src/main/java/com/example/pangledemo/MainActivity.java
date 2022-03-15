@@ -24,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initResult = findViewById(R.id.textView);
         initTTAdSdk();
-        loadAD("980051567");
     }
 
     public void openFullScreenAd(View view) {
-        showAdIfAvailable();
+        loadAD("980051567");
+        // showAdIfAvailable();
     }
 
     private TTAdConfig buildConfig() {
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFullScreenVideoAdLoad(TTFullScreenVideoAd ttFullScreenVideoAd) {
                 mttFullVideoAd = ttFullScreenVideoAd;
                 Toast.makeText(MainActivity.this, "Full Screen Video Load", Toast.LENGTH_SHORT).show();
+                showAdIfAvailable();
 
             }
 
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             //Call the showAppOpenAd method to render the ad and it needs to pass in activity.
             mttFullVideoAd.showFullScreenVideoAd(MainActivity.this);
         } else {
-            Toast.makeText(this, "Full Video need load", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Load AD failed", Toast.LENGTH_SHORT).show();
         }
     }
 
