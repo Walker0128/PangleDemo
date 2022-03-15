@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void fail(int code, String msg) {
-                initResult.setText("SDK Init Failed");
+                String message = "SDK Init Failed: Code: " + code + ", message: " + msg;
+                initResult.setText(message);
             }
         });
     }
